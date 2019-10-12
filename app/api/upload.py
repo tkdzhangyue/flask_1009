@@ -55,5 +55,5 @@ if __name__ == "__main__":
 
     mongodb = MongoClient('localhost', 27017)
     db = mongodb.flask_1009
-    upload_image(db, 'da633464-ebfb-11e9-9afa-4ccc6a382b99', 'jpg',
-                 bson.binary.Binary(open('../static/images/3.jpg', 'rb').read()))
+    upload_image(db, 'd184a036-ec9c-11e9-84b2-4ccc6a382b99', 'jpg',
+                 bson.binary.Binary(open('../static/images/444.jpg', 'rb').read()))

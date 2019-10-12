@@ -15,6 +15,16 @@ def get_main_page_goods(db):
     return all_goods
 
 
+def get_goods_detail(db, goods_id):
+    all_images = []
+    goods = db.goods.find_one({'uuid': goods_id})
+    images = goods['images']
+    for image in images:
+        all_images.append(image['uuid'])
+    return all_images
+
+
+
 if __name__ == "__main__":
     from pymongo import MongoClient
 

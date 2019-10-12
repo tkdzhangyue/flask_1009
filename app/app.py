@@ -29,5 +29,11 @@ def get_one_image(image_id):
     return send_file(io.BytesIO(img), mimetype="image/jpg")
 
 
+@app.route("/goods/<goods_id>", methods=['GET'])
+def get_goods_details(goods_id):
+    goods_images = goods.get_goods_detail(db, goods_id)
+    return jsonify(goods_images)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
