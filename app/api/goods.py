@@ -8,13 +8,11 @@ def get_one_goods(db):
 
 
 def get_main_page_goods(db):
-    all_goods = db.goods.find({'id': {'$lt': 20}})
-    page = []
-    for good in all_goods:
+    all_goods = []
+    for good in db.goods.find():
         del good['_id']
-        # good['main_img']['img'] = good['main_img']['img'].decode()
-        page.append(good)
-    return page
+        all_goods.append(good)
+    return all_goods
 
 
 if __name__ == "__main__":

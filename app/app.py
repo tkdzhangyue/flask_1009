@@ -16,11 +16,11 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    # all_goods = goods.get_main_page_goods(db)
+    all_goods = goods.get_main_page_goods(db)
 
     # return send_file(io.BytesIO(img), mimetype="image/png")
-    # return jsonify(all_goods)
-    return 'hello'
+    return jsonify(all_goods)
+    # return 'hello'
 
 
 @app.route("/image/<image_id>", methods=['GET'])
