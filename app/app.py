@@ -7,6 +7,8 @@ import api.goods as goods
 import api.image as image
 import io
 import json
+import requests
+import config.setting as setting
 
 mongodb = MongoClient('localhost', 27017)
 db = mongodb.flask_1009
@@ -33,6 +35,17 @@ def get_one_image(image_id):
 def get_goods_details(goods_id):
     goods_images = goods.get_goods_detail(db, goods_id)
     return jsonify(goods_images)
+
+
+@app.route("/login/<user_code>", methods=['GET'])
+def get_openid(user_code):
+    url = 'https://api.weixin.qq.com/sns/jscode2session'
+    param = {
+        'appid': setting.APP_ID,
+        'secret': setting.APP_SECRET,
+        'js_code': user_code,
+        'grant_type': 'authorization_code'}
+    return requests.get(url, param, proxies=setting.proxy).text
 
 
 if __name__ == '__main__':
