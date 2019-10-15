@@ -17,7 +17,8 @@ def get_main_page_goods(db):
 
 def get_goods_detail(db, goods_id):
     all_images = []
-    goods = db.goods.find_one({'uuid': goods_id})
+    goods = db.goods.find_one({'goods_id': goods_id})
+    main_img = goods['main_img'][0]['uuid']
     images = goods['images']
     for image in images:
         all_images.append(image['uuid'])

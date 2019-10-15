@@ -56,13 +56,15 @@ def cart():
         cart = user.get_cart(db, openid)
         return jsonify(cart)
     elif request.method == 'POST':
-        openid = request.form['openid']
-        addedGodds = request.form['addedGoods']
+        data = json.loads(str(request.data, 'utf-8'))
+        openid = data['openid']
+        addedGodds = data['addedGoods']
         if addedGodds:
-            user.add_to_cart(db, openid, addedGodds)
+            res = user.add_to_cart(db, openid, addedGodds)
         else:
-            updatedCart = request.form['cart']
-            user.update_cart(db, openid, updatedCart)
+            updatedCart = data['cart']
+            res = user.update_cart(db, openid, updatedCart)
+        return res
 
 
 if __name__ == '__main__':
