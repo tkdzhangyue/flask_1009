@@ -15,7 +15,7 @@ def get_cart(db, openid):
             user =  db.users.find_one({'openid': openid})
             for goods in user['cart']:
                 cart.append({
-                    'goods_uuid': goods['uuid'],
+                    'goods_id': goods['goods_id'],
                     'count': goods['count'],
                     'image': goods['image']
                 })
