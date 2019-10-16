@@ -104,6 +104,14 @@ def upload_new_goods(db, img_info):
     ])
 
 
+def upload_goods_price_stock(db, goods_id, info):
+    db.goods.update_one({'goods_id': goods_id}, {'$set': {
+        'title': info['title'],
+        'price': info['price'],
+        'stock_num': info['stock_num']
+    }})
+
+
 if __name__ == "__main__":
     from pymongo import MongoClient
 
@@ -136,4 +144,11 @@ if __name__ == "__main__":
             'bytes': b1
         }
     ]
-    upload_new_goods(db, img_info)
+    # upload_new_goods(db, img_info)
+    goods_id = '72d24447-ef33-11e9-9654-4ccc6a382b99'
+    info = {
+        'price': 55,
+        'title': '测试标题43333333333332',
+        'stock_num': 19
+    }
+    upload_goods_price_stock(db, goods_id, info)

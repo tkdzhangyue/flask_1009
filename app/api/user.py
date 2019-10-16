@@ -12,12 +12,16 @@ def get_cart(db, openid):
     else:
         cart = []
         try:
-            user =  db.users.find_one({'openid': openid})
+            user = db.users.find_one({'openid': openid})
             for goods in user['cart']:
+                goods_info = db.goods.find_one({'goods_id': goods['goods_id']})
                 cart.append({
                     'goods_id': goods['goods_id'],
                     'count': goods['count'],
-                    'image': goods['image']
+                    'image': goods['image'],
+                    'title': goods_info['title'],
+                    'price': goods_info['price'],
+                    'stock_num': goods_info['stock_num']
                 })
         except ValueError:
             print(ValueError)
