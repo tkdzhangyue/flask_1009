@@ -67,5 +67,20 @@ def cart():
         return res
 
 
+@app.route("/address/", methods=['GET', 'POST'])
+def get_user_address():
+    if request.method == 'GET':
+        openid = request.args['openid']
+        address_list = []
+        user_info = db.users.find_one({'openid': openid})
+        try:
+            address_list = user_info['address_list']
+        except Exception:
+            print(Exception)
+        return jsonify(address_list)
+    elif request.method == 'POST':
+        return jsonify({'success': True})
+
+
 if __name__ == '__main__':
     app.run(debug=True)
