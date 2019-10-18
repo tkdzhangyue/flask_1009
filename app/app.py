@@ -71,15 +71,24 @@ def cart():
 def get_user_address():
     if request.method == 'GET':
         openid = request.args['openid']
-        address_list = []
+        address = {}
         user_info = db.users.find_one({'openid': openid})
         try:
-            address_list = user_info['address_list']
+            address = user_info['address']
         except Exception:
             print(Exception)
-        return jsonify(address_list)
+            address = {
+                'name': '',
+                'tel': '',
+                'address': ''
+            }
+        finally:
+            return jsonify(address)
     elif request.method == 'POST':
-        return jsonify({'success': True})
+        data = json.loads(request.data)
+        openid = data['openid']
+        address = data['address']
+        return user.update_address(db, openid, address)
 
 
 if __name__ == '__main__':

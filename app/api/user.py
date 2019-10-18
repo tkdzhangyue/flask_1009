@@ -51,3 +51,19 @@ def add_to_cart(db, openid, goods_id):
         return jsonify({'success': True})
     except Exception:
         return jsonify({'success': False})
+
+
+def update_address(db, openid, address):
+    try:
+        db.users.update_one({'openid': openid}, {
+            "$set": {
+                'address': {
+                    'name': address['name'],
+                    'tel': address['tel'],
+                    'address': address['address']
+                }
+            }
+        })
+        return jsonify({'success': True})
+    except Exception:
+        return jsonify({'success': False})
