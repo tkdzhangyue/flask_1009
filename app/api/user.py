@@ -48,10 +48,12 @@ def add_to_cart(db, openid, goods_id):
                 }
             }
         })
-        return jsonify({'success': True})
+        cart_list = []
+        for goods in db.users.find_one({'openid': openid})['cart']:
+            cart_list.append(goods)
+        return jsonify({'success': True, 'cart_list': cart_list})
     except Exception:
-        return jsonify({'success': False})
-
+        return jsonify({'success': False, 'cart_list': []})
 
 def update_address(db, openid, address):
     try:
