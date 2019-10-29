@@ -10,34 +10,70 @@ import json
 import requests
 import config.setting as setting
 import api.user as user
+from api.activity import Activity
 
 mongodb = MongoClient('localhost', 27017)
 db = mongodb.flask_1009
+activity = Activity(db)
 
 app = Flask(__name__)
 
 
-@app.route('/')
-def index():
-    all_goods = goods.get_main_page_goods(db)
+# @app.route('/')
+# def index():
+#     all_goods = goods.get_main_page_goods(db)
+#
+#     # return send_file(io.BytesIO(img), mimetype="image/png")
+#     return jsonify(all_goods)
+#     # return 'hello'
+#
+#
+# @app.route("/image/<image_id>", methods=['GET'])
+# def get_one_image(image_id):
+#     img = image.get_img(db, image_id)
+#     return send_file(io.BytesIO(img), mimetype="image/jpg")
+#
+#
+# @app.route("/goods/<goods_id>", methods=['GET'])
+# def get_goods_details(goods_id):
+#     goods_images = goods.get_goods_detail(db, goods_id)
+#     return jsonify(goods_images)
+#
+#
 
-    # return send_file(io.BytesIO(img), mimetype="image/png")
-    return jsonify(all_goods)
-    # return 'hello'
-
-
-@app.route("/image/<image_id>", methods=['GET'])
-def get_one_image(image_id):
-    img = image.get_img(db, image_id)
-    return send_file(io.BytesIO(img), mimetype="image/jpg")
-
-
-@app.route("/goods/<goods_id>", methods=['GET'])
-def get_goods_details(goods_id):
-    goods_images = goods.get_goods_detail(db, goods_id)
-    return jsonify(goods_images)
-
-
+#
+#
+# @app.route("/cart/", methods=['GET', 'POST'])
+# def cart():
+#     if request.method == 'GET':
+#         openid = request.args['openid']
+#         cart = user.get_cart(db, openid)
+#         return jsonify(cart)
+#     elif request.method == 'POST':
+#         data = json.loads(str(request.data, 'utf-8'))
+#         openid = data['openid']
+#         addedGodds = data['addedGoods']
+#         if addedGodds:
+#             res = user.add_to_cart(db, openid, addedGodds)
+#         else:
+#             updatedCart = data['cart']
+#             res = user.update_cart(db, openid, updatedCart)
+#         return res
+#
+#
+# @app.route("/address/", methods=['GET', 'POST'])
+# def get_user_address():
+#     if request.method == 'GET':
+#         openid = request.args['openid']
+#         address_list = []
+#         user_info = db.users.find_one({'openid': openid})
+#         try:
+#             address_list = user_info['address_list']
+#         except Exception:
+#             print(Exception)
+#         return jsonify(address_list)
+#     elif request.method == 'POST':
+#         return jsonify({'success': True})
 @app.route("/login/<user_code>", methods=['GET'])
 def get_openid(user_code):
     url = 'https://api.weixin.qq.com/sns/jscode2session'
@@ -45,41 +81,69 @@ def get_openid(user_code):
         'appid': setting.APP_ID,
         'secret': setting.APP_SECRET,
         'js_code': user_code,
-        'grant_type': 'authorization_code'}
-    return requests.get(url, param, proxies=setting.proxy).text
+        'grant_type': 'authorization_code'
+    }
+    res = requests.get(url, param, proxies=setting.proxy)
+    return res.text
 
 
-@app.route("/cart/", methods=['GET', 'POST'])
-def cart():
+@app.route("/getMainPageActivity/", methods=['GET'])
+def get_main_page_activity():
+    all_activity = []
     if request.method == 'GET':
         openid = request.args['openid']
-        cart = user.get_cart(db, openid)
-        return jsonify(cart)
-    elif request.method == 'POST':
-        data = json.loads(str(request.data, 'utf-8'))
-        openid = data['openid']
-        addedGodds = data['addedGoods']
-        if addedGodds:
-            res = user.add_to_cart(db, openid, addedGodds)
-        else:
-            updatedCart = data['cart']
-            res = user.update_cart(db, openid, updatedCart)
-        return res
+        all_activity = activity.getMainPageActivity(openid)
+    return jsonify(all_activity)
 
 
-@app.route("/address/", methods=['GET', 'POST'])
-def get_user_address():
-    if request.method == 'GET':
-        openid = request.args['openid']
-        address_list = []
-        user_info = db.users.find_one({'openid': openid})
+@app.route("/newActivity/", methods=['POST'])
+def post_new_activity():
+    if request.method == 'POST':
         try:
-            address_list = user_info['address_list']
+            data = json.loads(str(request.data, 'utf-8'))
+            openid = data['openid']
+            userInfo = data['userInfo']
+            activityToAdd = data['activityToAdd']
+            activity.postNewActivity(openid=openid, userInfo=userInfo, activity=activityToAdd)
+            return jsonify({'success': True})
         except Exception:
             print(Exception)
-        return jsonify(address_list)
-    elif request.method == 'POST':
-        return jsonify({'success': True})
+            return jsonify({'success': False})
+
+
+@app.route("/takeActivity/", methods=['POST'])
+def post_one_activity():
+    if request.method == 'POST':
+        try:
+            data = json.loads(str(request.data, 'utf-8'))
+            openid = data['openid']
+            userInfo = data['userInfo']
+            activityId = data['activityId']
+            activity.takeOneActivity(openid, userInfo, activityId)
+            return jsonify({'success': True})
+        except Exception:
+            return jsonify({'success': False})
+
+
+@app.route("/updateLocation/", methods=['POST'])
+def update_location():
+    if request.method == 'POST':
+        try:
+            data = json.loads(str(request.data, 'utf-8'))
+            openid = data['openid']
+            location = data['location']
+            activity.updateUserLocation(openid, location)
+            return jsonify({'success': True})
+        except Exception:
+            return jsonify({'success': False})
+    elif request.method == 'GET':
+        try:
+            openid = request.args['openid']
+            activityId = request.args['activityId']
+            allMember = activity.getOneActivityAllMember(openid, activityId)
+            return jsonify(allMember)
+        except Exception:
+            return jsonify([])
 
 
 if __name__ == '__main__':
