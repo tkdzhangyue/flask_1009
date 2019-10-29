@@ -1,0 +1,4 @@
+.idea/
+app/api/__pycache__/image.cpython-36.pyc
+app/api/__pycache__/user.cpython-36.pyc
+app/config/__pycache__/
