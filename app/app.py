@@ -132,10 +132,17 @@ def update_location():
             data = json.loads(str(request.data, 'utf-8'))
             openid = data['openid']
             location = data['location']
+            activityId = data['activityId']
             activity.updateUserLocation(openid, location)
-            return jsonify({'success': True})
+            res = {
+                'success': True,
+                'allLocation': activity.getOneActivityAllMember(openid, activityId)
+            }
+            return jsonify(res)
         except Exception:
-            return jsonify({'success': False})
+            print(Exception)
+            raise Exception
+            return jsonify({'success': False, 'allLocation': []})
     elif request.method == 'GET':
         try:
             openid = request.args['openid']

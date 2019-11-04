@@ -57,12 +57,13 @@ class Activity:
         })
 
     def updateUserLocation(self, openid, location):
-        if self.db.location.find({'openid': openid}).count < 1:
+        count = self.db.location.find({'openid': openid}).count()
+        if count < 1:
             self.db.location.insert_one({'openid': openid, 'location': location})
         else:
             self.db.location.update_one({'openid': openid}, {
                 "$set": {
-                    location: {
+                    'location': {
                         'latitude': location['latitude'],
                         'longitude': location['longitude']
                     }
@@ -73,10 +74,16 @@ class Activity:
         all_openid = []
         re = []
         activity = self.db.activity.find_one({'activityId': activityId})
-        for member in activity['allMember']:
-            all_openid.append(member.openid)
-        for location in self.db.location.find({'openid': {"$in": all_openid}}):
-            re.append(location['location'])
+        for member in activity['activityInfo']['allMember']:
+            all_openid.append(member['openid'])
+        allLocation = self.db.location.find({'openid': {"$in": all_openid}})
+        for location in allLocation:
+            user = self.db.users.find_one({'openid': location['openid']})
+            iconPath = user['userInfo']['avatarUrl']
+            re.append({
+                'location': location['location'],
+                'iconPath': iconPath,
+                'openid': location['openid']})
         return re
 
     def createOneUser(self, openid, userInfo):
