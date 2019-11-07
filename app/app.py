@@ -74,6 +74,12 @@ app = Flask(__name__)
 #         return jsonify(address_list)
 #     elif request.method == 'POST':
 #         return jsonify({'success': True})
+
+@app.route("/test", methods=['GET'])
+def get_test():
+    return 'test success!'
+
+
 @app.route("/login/<user_code>", methods=['GET'])
 def get_openid(user_code):
     url = 'https://api.weixin.qq.com/sns/jscode2session'
