@@ -16,7 +16,7 @@ mongodb = MongoClient('localhost', 27017)
 db = mongodb.flask_1009
 activity = Activity(db)
 
-app = Flask(__name__)
+app = Flask('mini')
 
 
 # @app.route('/')
@@ -98,6 +98,8 @@ def get_main_page_activity():
     all_activity = []
     if request.method == 'GET':
         openid = request.args['openid']
+        if len(openid) < 30:
+            return jsonify([])
         all_activity = activity.getMainPageActivity(openid)
     return jsonify(all_activity)
 
@@ -160,4 +162,4 @@ def update_location():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)

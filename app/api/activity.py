@@ -21,10 +21,11 @@ class Activity:
 
     def postNewActivity(self, openid, userInfo, activity):
         userInfo = userInfo
-        if self.db.users.find({'openid': openid}).count() == 0:
+        if self.db.users.find({'openid': openid}).count() == 0 and len(openid) > 6:
             self.createOneUser(openid, userInfo)
         # 更新用户信息
         self.db.users.update_one({'openid': openid}, {"$addToSet": {
+            'userInfo': userInfo,
             'activity': {'activityId': activity['activityId']}
         }})
         # 更新活动
