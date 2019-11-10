@@ -63,8 +63,8 @@ def post_new_activity():
             activityToAdd = data['activityToAdd']
             activity.postNewActivity(openid=openid, userInfo=userInfo, activity=activityToAdd)
             return jsonify({'success': True})
-        except Exception:
-            print(Exception)
+        except Exception as e:
+            print(e)
             return jsonify({'success': False})
 
 
