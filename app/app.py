@@ -29,11 +29,6 @@ def get_index():
     return 'welcome to my bike life!'
 
 
-@app.route("/test", methods=['GET'])
-def get_test():
-    return 'test success!'
-
-
 @app.route("/login/<user_code>", methods=['GET'])
 def get_openid(user_code):
     url = 'https://api.weixin.qq.com/sns/jscode2session'
