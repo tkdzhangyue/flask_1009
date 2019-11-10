@@ -25,8 +25,10 @@ class Activity:
             self.createOneUser(openid, userInfo)
         # 更新用户信息
         self.db.users.update_one({'openid': openid}, {"$addToSet": {
-            'userInfo': userInfo,
             'activity': {'activityId': activity['activityId']}
+        }})
+        self.db.users.update_one({'openid': openid}, {"$set": {
+            'userInfo': userInfo
         }})
         # 更新活动
         self.db.activity.insert_one({
