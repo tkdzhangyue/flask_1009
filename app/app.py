@@ -47,7 +47,7 @@ def get_main_page_activity():
     all_activity = []
     if request.method == 'GET':
         openid = request.args['openid']
-        if len(openid) < 30:
+        if len(str(openid)) < 30:
             return jsonify([])
         all_activity = activity.getMainPageActivity(openid)
     return jsonify(all_activity)
