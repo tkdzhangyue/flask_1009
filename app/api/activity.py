@@ -17,6 +17,7 @@ class Activity:
         for item in all:
             del item['_id']
             re.append(item)
+        print(re)
         return re
 
     def postNewActivity(self, openid, userInfo, activity):
