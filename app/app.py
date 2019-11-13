@@ -47,7 +47,7 @@ def get_main_page_activity():
     all_activity = []
     if request.method == 'GET':
         openid = request.args['openid']
-        if len(str(openid)) < 30:
+        if len(str(openid)) < 25:
             return jsonify([])
         all_activity = activity.getMainPageActivity(openid)
     return jsonify(all_activity)
@@ -98,7 +98,6 @@ def update_location():
             return jsonify(res)
         except Exception:
             print(Exception)
-            raise Exception
             return jsonify({'success': False, 'allLocation': []})
     elif request.method == 'GET':
         try:
@@ -110,5 +109,37 @@ def update_location():
             return jsonify([])
 
 
+@app.route("/activityDetail/", methods=['GET'])
+def getActivityDetail():
+    re = {'success': False}
+    if request.method == 'GET':
+        activityId = request.args['activityId']
+        tmp = activity.getActivity(activityId)
+        if tmp:
+            re['success'] = True
+            re['activity'] = tmp
+        print(re)
+        return jsonify(re)
+    else:
+        return jsonify(re)
+
+
+@app.route("/myActivity/", methods=['GET'])
+def getUserAct():
+    re = {'success': False}
+    if request.method == 'GET':
+        openid = request.args['openid']
+        act = activity.getUserAct(openid)
+        if act:
+            re['success'] = True
+            re['activity'] = act
+        print(re)
+        return jsonify(re)
+    else:
+        print(re)
+        return jsonify(re)
+
+
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='127.0.0.1', port=5000)

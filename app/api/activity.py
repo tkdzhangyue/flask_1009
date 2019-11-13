@@ -96,3 +96,20 @@ class Activity:
             'userInfo': userInfo,
             'activity': []
         })
+
+    def getActivity(self, acId):
+        data = self.db.activity.find_one({'activityId': acId})
+        if data:
+            del data['_id']
+        return data
+
+    def getUserAct(self, openid):
+        act_ite = self.db.activity.find({
+            'activityInfo.author.openid': openid
+        })
+        re = []
+        for act in act_ite:
+            # 去掉路线数据
+            del act['activityInfo']['polyline']
+            re.append(act['activityInfo'])
+        return re
