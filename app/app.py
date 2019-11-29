@@ -140,6 +140,28 @@ def getUserAct():
         return jsonify(re)
 
 
+@app.route("/quiteActivity/", methods=['POST'])
+def quiteActivity():
+    re = {'success': False}
+    if request.method == 'POST':
+        try:
+            data = json.loads(str(request.data, 'utf-8'))
+            openid = data['openid']
+            activityId = data['activityId']
+
+            activity.delUserFromActivity(activityId, openid)
+
+            re = {
+                'success': True
+            }
+            return jsonify(re)
+        except Exception as e:
+            print(e)
+            return jsonify(re)
+    else:
+        print(re)
+
+
 if __name__ == '__main__':
     # app.run(debug=True, host='0.0.0.0', port=5000)
     app.run(debug=True, host='127.0.0.1', port=5000)

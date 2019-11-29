@@ -113,3 +113,19 @@ class Activity:
             del act['activityInfo']['polyline']
             re.append(act['activityInfo'])
         return re
+
+    def delUserFromActivity(self, activityId, openid):
+        # 确认活动是否只有一个人
+        act = self.db.activity.find_one({'activityId': activityId})
+        if len(act['activityInfo']['allMember']) == 0:
+            self.db.activity.delete_one({'activityId': activityId})
+        elif len(act['activityInfo']['allMember']) == 1:
+            if act['activityInfo']['allMember'][0]['openid'] == openid:
+                self.db.activity.delete_one({'activityId': activityId})
+        else:
+            act = [u for u in act['activityInfo']['allMember'] if u['openid'] != openid]
+            self.db.activity.update_one({'activityId': activityId}, {
+                '$set': {
+                    'activityInfo.allMember': act
+                }
+            })
