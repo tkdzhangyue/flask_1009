@@ -105,7 +105,7 @@ class Activity:
 
     def getUserAct(self, openid):
         act_ite = self.db.activity.find({
-            'activityInfo.author.openid': openid
+            'activityInfo.allMember.openid': openid
         })
         re = []
         for act in act_ite:

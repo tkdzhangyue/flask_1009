@@ -88,9 +88,10 @@ def post_one_activity():
             userInfo = data['userInfo']
             activityId = data['activityId']
             activity.takeOneActivity(openid, userInfo, activityId)
+            act = activity.getActivity(activityId)
             # 参加活动logging
             logging.debug(openid)
-            return jsonify({'success': True})
+            return jsonify({'success': True, 'activity': act})
         except Exception as e:
             logging.exception(e)
             return jsonify({'success': False})
@@ -212,5 +213,5 @@ if __name__ == '__main__':
 
     # logging
     logging_config()
-
+    app.logger.setLevel()
     app.run(debug=True, host='127.0.0.1', port=5000)
