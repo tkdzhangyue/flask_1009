@@ -40,6 +40,8 @@ class Activity:
     def takeOneActivity(self, openid, userInfo, activityId):
         if self.db.users.find({'openid': openid}).count() == 0:
             self.createOneUser(openid, userInfo)
+        elif userInfo != {}:
+            self.updateOneUser(openid, userInfo)
         # 更新用户
         self.db.users.update_one({'openid': openid}, {
             "$addToSet": {
@@ -51,12 +53,7 @@ class Activity:
         # 更新活动
         self.db.activity.update_one({'activityId': activityId}, {
             "$addToSet": {
-                'activityInfo': {
-                    'allMember': {
-                        'openid': openid,
-                        'userInfo': userInfo
-                    }
-                }
+                'activityInfo.allMember': userInfo
             }
         })
 
@@ -95,6 +92,15 @@ class Activity:
             'openid': openid,
             'userInfo': userInfo,
             'activity': []
+        })
+
+    def updateOneUser(self, openid, userInfo):
+        self.db.users.update_one({
+            'openid': openid
+        }, {
+            '$set': {
+                'userInfo': userInfo
+            }
         })
 
     def getActivity(self, acId):
