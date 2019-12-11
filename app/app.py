@@ -7,14 +7,31 @@ import json
 import requests
 import config.setting as setting
 from api.activity import Activity
+from cronJob import CronJob
 import logging
 from logging.handlers import TimedRotatingFileHandler
+from flask_apscheduler import APScheduler
 
-mongodb = MongoClient('localhost', 27017)
+
+class Config(object):
+    SCHEDULER_API_ENABLED = True
+
+
+mongodb = MongoClient(setting.MONGODB_SERVER, 27017)
 db = mongodb.flask_1009
 activity = Activity(db)
-
+cronJob = CronJob(db)
 app = Flask('mini')
+app.config.from_object(Config())
+scheduler = APScheduler()
+scheduler.init_app(app)
+scheduler.start()
+
+
+# cron mission
+@scheduler.task('cron', id='do_job_2', hour='*')
+def per_hour():
+    cronJob.delTimeOutActivity()
 
 
 @app.route("/test", methods=['GET'])
